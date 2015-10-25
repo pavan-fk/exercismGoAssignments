@@ -1,9 +1,12 @@
 package leap
 
+//TestVersion is the exercism test version
 const TestVersion = 1
 
+//IsLeapYear checks whether a year is a leap year or not
+//it returns a boolean
 func IsLeapYear(year int) bool {
-	var divisor int = 4
+	var divisor = 4
 	// check for century year
 	if year%100 == 0 {
 		divisor = 400
