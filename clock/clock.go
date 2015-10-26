@@ -2,41 +2,47 @@ package clock
 
 import "fmt"
 
-//TestVersion is the exercism test version
+//TestVersion is the exercism test version.
 const TestVersion = 2
 
-//MinutesInADay is the constant number of minutes in 24 hours
+//MinutesInADay is the constant number of minutes in 24 hours.
 const MinutesInADay = 1440
 
-type clock struct {
-	Hour   int
-	Minute int
+//Clock holds the time as hour & minute.
+type Clock struct {
+	//un-exported fields inside exported struct. Problem!?
+	hour   int
+	minute int
 }
 
-func Time(hourComponent, minuteComponent int) clock {
-	timeObject := new(clock)
+//Time is a 'constructor' that creates and initialises a Clock.
+func Time(hourComponent, minuteComponent int) Clock {
+	clockObject := new(Clock)
+
+	// trying to clean up input for negatives & overflows(beyond 24 & 1440)
 	hourComponent = (hourComponent + 24) % 24
 	minuteComponent = (minuteComponent + MinutesInADay) % MinutesInADay
-	return timeObject.recomputeTime((hourComponent * 60) + minuteComponent)
+	return clockObject.setTimeInClock((hourComponent * 60) + minuteComponent)
 }
 
-func (time *clock) String() string {
-	return fmt.Sprintf("%02d:%02d", time.Hour, time.Minute)
+func (time *Clock) String() string {
+	return fmt.Sprintf("%02d:%02d", time.hour, time.minute)
 }
 
-func (time clock) recomputeTime(minutes int) clock {
+//function on Clock to compute hour and minute from a total minutes(since 00:00).
+func (time Clock) setTimeInClock(minutes int) Clock {
 	if minutes < 0 {
 		minutes = MinutesInADay + minutes
 	}
 	if minutes >= 1440 {
 		minutes = minutes - 1440
 	}
-	time.Hour = minutes / 60
-	time.Minute = minutes % 60
+	time.hour = minutes / 60
+	time.minute = minutes % 60
 	return time
 }
 
-//Add adds minutes(int) to a clock
-func (time clock) Add(minutes int) clock {
-	return time.recomputeTime(minutes + (time.Hour * 60) + time.Minute)
+//Add adds minutes to the time on a Clock.
+func (time Clock) Add(minutes int) Clock {
+	return time.setTimeInClock(minutes + (time.hour * 60) + time.minute)
 }
